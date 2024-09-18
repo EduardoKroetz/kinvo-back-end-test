@@ -1,7 +1,7 @@
 ﻿
 using Aliquota.Application.Services;
 using Aliquota.Domain.DTOs.FinancialProduct;
-using Aliquota.Domain.DTOs.Investiment;
+using Aliquota.Domain.DTOs.Investment;
 using Aliquota.Domain.Entities;
 using Aliquota.Infra.Persistance;
 using Aliquota.Infra.Repositories;
@@ -9,8 +9,8 @@ using Aliquota.Infra.Repositories;
 var dbContext = new AliquotaDbContext();
 var financialProductRepository = new FinancialProductRepository(dbContext);
 var financialProductService = new FinancialProductService(financialProductRepository);
-var investimentRepository = new InvestimentRepository(dbContext);
-var investimentService = new InvestimentService(investimentRepository, financialProductRepository);
+var investmentRepository = new InvestmentRepository(dbContext);
+var investmentService = new InvestmentService(investmentRepository, financialProductRepository);
 
 Menu();
 
@@ -18,9 +18,9 @@ void Menu()
 {
     Console.Clear();
     Console.WriteLine("1 - Listar Produtos financeiros");
-    Console.WriteLine("2 - Listar Investimentos");
+    Console.WriteLine("2 - Listar Investmentos");
     Console.WriteLine("3 - Criar Produto financeiro (Campos: Nome do produto, Rentabilidade por ano)");
-    Console.WriteLine("4 - Criar Investimento (Campos: Id do Produto financeiro, data de resgate, valor do investimento)");
+    Console.WriteLine("4 - Criar Investmento (Campos: Id do Produto financeiro, data de resgate, valor do investmento)");
     Console.WriteLine("5 - Sair");
 
     var option = Console.ReadLine();
@@ -31,13 +31,13 @@ void Menu()
             ShowFinancialProduts();
             break;
         case "2":
-            ShowInvestiments();
+            ShowInvestments();
             break;
         case "3":
             CreateFinancialProduct();
             break;
         case "4":
-            CreateInvestiment();
+            CreateInvestment();
             break;
         case "5":
             System.Environment.Exit(0);
@@ -66,20 +66,20 @@ void ShowFinancialProduct(FinancialProduct financialProduct)
     Console.WriteLine($"\t{financialProduct.Id} | {financialProduct.Name} - Rentabilidade: {financialProduct.ProfitabilityPerYear}%");
 }
 
-void ShowInvestiments()
+void ShowInvestments()
 {
-    var investiments = investimentService.GetInvestiments().Result;
-    foreach (var investiment in investiments)
+    var investments = investmentService.GetInvestments().Result;
+    foreach (var investment in investments)
     {
         Console.WriteLine(@$"
-        ID: {investiment.Id} | Aplicado em: {investiment.AppliedIn}
-        Valor aplicado: {investiment.AmountApplied}    
-        Rentabilidade: {investiment.ProfitabilityPerYear}% a.a
-        Lucro Previsto: R${investiment.Profit} 
-        Lucro Real(descontando IR): R${investiment.RealProfit}
+        ID: {investment.Id} | Aplicado em: {investment.AppliedIn}
+        Valor aplicado: {investment.AmountApplied}    
+        Rentabilidade: {investment.ProfitabilityPerYear}% a.a
+        Lucro Previsto: R${investment.Profit} 
+        Lucro Real(descontando IR): R${investment.RealProfit}
         Produto Financeiro:" + "\n\t");
 
-        ShowFinancialProduct(investiment.FinancialProduct);
+        ShowFinancialProduct(investment.FinancialProduct);
     }
     Console.ReadKey();
 }
@@ -120,12 +120,12 @@ void CreateFinancialProduct()
 }
 
 
-void CreateInvestiment()
+void CreateInvestment()
 {
     try
     {
         Console.Clear();
-        Console.WriteLine("Criar Investimento");
+        Console.WriteLine("Criar Investmento");
 
         Console.Write("Id do Produto financeiro: ");
         if (!int.TryParse(Console.ReadLine(), out int financialProductId))
@@ -143,7 +143,7 @@ void CreateInvestiment()
             return;
         }
 
-        Console.Write("Valor do investimento: ");
+        Console.Write("Valor do investmento: ");
         if (!decimal.TryParse(Console.ReadLine(), out decimal amountApplied))
         {
             Console.WriteLine("Valor inválido. Deve ser um número decimal.");
@@ -151,15 +151,15 @@ void CreateInvestiment()
             return;
         }
 
-        var investiment = new CreateInvestimentDto(financialProductId, redemptionDate, amountApplied);
+        var investment = new CreateInvestmentDto(financialProductId, redemptionDate, amountApplied);
 
-        investimentService.CreateInvestiment(investiment).Wait();
+        investmentService.CreateInvestment(investment).Wait();
 
-        Console.WriteLine("Investimento criado com sucesso!");
+        Console.WriteLine("Investmento criado com sucesso!");
     }
     catch (Exception ex)
     {
-        Console.WriteLine($"Ocorreu um erro ao criar o investimento: {ex.Message}");
+        Console.WriteLine($"Ocorreu um erro ao criar o investmento: {ex.Message}");
     }
     finally
     {

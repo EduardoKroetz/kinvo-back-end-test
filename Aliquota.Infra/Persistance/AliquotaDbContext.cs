@@ -6,7 +6,7 @@ namespace Aliquota.Infra.Persistance;
 public class AliquotaDbContext : DbContext
 {
     public DbSet<FinancialProduct> FinancialProducts { get; set; }
-    public DbSet<Investiment> Investiments { get; set; }
+    public DbSet<Investment> Investments { get; set; }
 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -18,7 +18,7 @@ public class AliquotaDbContext : DbContext
     {
         modelBuilder.Entity<FinancialProduct>()
             .HasKey(x => x.Id);
-        modelBuilder.Entity<Investiment>()
+        modelBuilder.Entity<Investment>()
             .HasKey(x => x.Id);
     }
 }
